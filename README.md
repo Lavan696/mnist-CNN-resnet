@@ -1,154 +1,276 @@
-# MNIST Handwritten Digit Classification using CNN and Keras Sequential API
+# MNIST Handwritten Digit Classification using Residual CNN and TensorFlow Keras
 
-This project implements a powerful **Convolutional Neural Network (CNN)** using the **TensorFlow Keras Sequential API** to classify handwritten digits (0–9) from the **MNIST dataset**.  
+This project implements a custom **Residual Convolutional Neural Network (Residual CNN)** using **TensorFlow Keras Functional API** to classify handwritten digits (0–9) from the **MNIST dataset**.
 
 The project focuses on:
-- Strong generalization performance
-- Efficient CNN architecture design
-- Robust evaluation using multiple metrics
-- Detailed visualization and error analysis
-- Reproducible deep learning experimentation
 
-The final model achieves **99.50% test accuracy** with exceptionally strong probabilistic performance and class separability.
+- Strong generalization through extensive data augmentation
+- Efficient residual network architecture with skip connections
+- Advanced training strategies (One-Cycle Learning Rate + Fine-Tuning)
+- Test-Time Augmentation (TTA) for improved prediction stability
+- Deterministic and reproducible experimentation
+- Comprehensive evaluation and error analysis
+
+The final model combines modern deep learning practices with rigorous evaluation to achieve highly accurate and reliable handwritten digit recognition.
 
 ---
 
 ## Project Overview
 
-- Loaded the MNIST dataset from OpenML  
-- Reshaped and normalized grayscale images  
-- Built a custom deep CNN architecture using:
-  - Convolutional layers
-  - Batch Normalization
-  - MaxPooling
-  - Dropout regularization
-- Trained using Adam optimizer with dynamic learning rate scheduling  
-- Evaluated performance using extensive classification metrics  
-- Visualized confusion matrices, ROC curves, PR curves, confidence histograms, and misclassified digits  
-- Saved the trained model using Joblib  
+- Loaded the MNIST dataset using TensorFlow/Keras
+- Normalized and reshaped images into CNN-compatible format
+- Created a dedicated validation set before augmentation to prevent data leakage
+- Applied eight augmentation strategies to improve generalization
+- Built a custom Residual CNN architecture with skip connections
+- Trained using SGD with Nesterov Momentum
+- Implemented a custom One-Cycle Learning Rate Scheduler
+- Performed an additional fine-tuning stage using a lower learning rate
+- Applied Test-Time Augmentation (TTA) during inference
+- Evaluated using extensive classification metrics and visualizations
+- Saved the final trained model in native Keras format
 
 ---
 
 ## Dataset
 
-- **Dataset:** MNIST Handwritten Digit Dataset  
-- **Source:** OpenML (`mnist_784`)  
-- **Total Samples:** 70,000  
-- **Classes:** 10 (Digits 0–9)  
-- **Image Size:** 28×28 grayscale  
-- **Train/Test Split:** 80% / 20%  
+- **Dataset:** MNIST Handwritten Digit Dataset
+- **Source:** TensorFlow/Keras
+- **Total Samples:** 70,000
+- **Classes:** 10 (Digits 0–9)
+- **Image Size:** 28 × 28 Grayscale
+- **Training Samples:** 60,000
+- **Test Samples:** 10,000
 
 ### Preprocessing
+
 - Reshaped images to:
-  ```python
-  (28, 28, 1)
-  ```
+
+```python
+(28, 28, 1)
+```
+
 - Normalized pixel values to:
-  ```python
-  [0, 1]
-  ```
+
+```python
+[0,1]
+```
+
+- Created a dedicated validation split before augmentation
 - Enabled deterministic TensorFlow operations for reproducibility
 
 ---
 
-## CNN Model Architecture
+## Data Augmentation Strategy
 
-The CNN is implemented using the **Keras Sequential API** and consists of multiple convolutional and dense blocks.
+To improve robustness and generalization, the training dataset was expanded using multiple augmentation techniques:
+
+1. Shift Left
+2. Shift Right
+3. Shift Up
+4. Shift Down
+5. Zoom In
+6. Zoom Out
+7. Random Rotation
+8. Elastic Transformation
+9. Original Images
+
+### Why Augmentation?
+
+These transformations simulate real-world handwriting variations such as:
+
+- Translation
+- Scaling
+- Rotation
+- Non-rigid distortions
+
+The augmented dataset became significantly larger, allowing the model to learn more invariant and generalized digit representations.
+
+---
+
+## Residual CNN Architecture
+
+The model is built using the **TensorFlow Keras Functional API** and incorporates modern residual learning principles.
+
+### Architecture Highlights
+
+- Initial Convolution Block
+- Batch Normalization
+- ReLU Activation
+- Multiple Residual Blocks
+- Identity Skip Connections
+- Max Pooling Layers
+- Spatial Dropout
+- Global Average Pooling
+- Softmax Classification Layer
+
+### Why Residual Learning?
+
+Residual connections help:
+
+- Improve gradient flow
+- Reduce optimization difficulties
+- Enable deeper architectures
+- Improve convergence stability
+
+---
 
 ## Model Architecture Visualization
 
-The complete CNN architecture diagram generated using TensorFlow/Keras has been included in this repository for better understanding of the layer-wise model structure and data flow.
+The complete Residual CNN architecture diagram generated using TensorFlow/Keras has been included in this repository for better understanding of the layer-wise model structure and data flow.
+
+---
 
 ## Training Strategy
 
-The model was trained with:
+### Stage 1: One-Cycle Learning Rate Training
 
-- **Epochs:** 25  
-- **Validation Split:** 10%  
-- **Optimizer:** Adam (`learning_rate = 1e-3`)  
-- **Loss Function:** `sparse_categorical_crossentropy`
+The model was trained using:
 
-### Learning Rate Scheduling
-Used:
-- `ReduceLROnPlateau`
+- SGD Optimizer
+- Nesterov Momentum
+- One-Cycle Learning Rate Policy
+- Label Smoothing Cross-Entropy Loss
 
-This dynamically reduces the learning rate when validation loss plateaus, improving convergence and generalization.
+The One-Cycle policy rapidly increases and then gradually decreases the learning rate, enabling faster convergence and better generalization.
+
+### Stage 2: Fine-Tuning
+
+After the primary training phase:
+
+- Best checkpoint weights were reloaded
+- Learning rate was reduced significantly
+- Additional fine-tuning epochs were performed
+
+This helped refine decision boundaries and maximize final performance.
+
+---
+
+## Test-Time Augmentation (TTA)
+
+Instead of relying on a single prediction per image, the final model uses:
+
+- Original image
+- +4° rotated image
+- −4° rotated image
+
+Predicted probabilities from all versions are averaged to produce the final prediction.
+
+### Benefits
+
+- Improved prediction stability
+- Better handling of edge cases
+- Reduced prediction variance
+- Enhanced robustness
 
 ---
 
 ## Model Evaluation Metrics
 
-| Metric                          | Value      |
-|---------------------------------|------------|
-| **Test Accuracy**               | *99.50%*   |
-| **Precision (Weighted)**        | *99.5003%* |
-| **Recall (Weighted)**           | *99.50%*   |
-| **F1-Score (Weighted)**         | *99.4999%* |
-| **ROC-AUC Score (OvR)**         | *99.9965%* |
-| **Log Loss**                    | *0.0249*   |
-| **Cohen’s Kappa Score**         | *0.9944*   |
-| **Matthews Corr. Coefficient**  | *0.9944*   |
-| **Top-3 Accuracy**              | *99.95%*   |
+| Metric | Value |
+|----------|----------|
+| **Test Accuracy** | **___** |
+| **Precision (Weighted)** | **___** |
+| **Recall (Weighted)** | **___** |
+| **F1 Score (Weighted)** | **___** |
+| **ROC-AUC Score (OvR)** | **___** |
+| **Log Loss** | **___** |
+| **Cohen's Kappa Score** | **___** |
+| **Matthews Correlation Coefficient** | **___** |
+| **Top-3 Accuracy** | **___** |
 
 ---
 
 ## Key Highlights
 
-- Deep CNN architecture with strong generalization capability  
-- Extensive use of Batch Normalization for stable training  
-- Dropout-based regularization to reduce overfitting  
-- Extremely high ROC-AUC indicating excellent class separability  
-- Very low log loss demonstrating confident probabilistic predictions  
-- Detailed multiclass evaluation pipeline  
-- Deterministic reproducibility setup for consistent experimentation  
+### Strong Generalization
+
+- Extensive augmentation pipeline
+- Dedicated validation split
+- Test-Time Augmentation
+- Fine-tuning stage
+
+### Efficient Architecture
+
+- Residual CNN design
+- Skip connections
+- Global Average Pooling
+- Spatial Dropout regularization
+
+### Robust Evaluation
+
+- Classification metrics
+- Probabilistic metrics
+- Confidence analysis
+- Error analysis
+- Per-class performance inspection
+
+### Reproducible Experimentation
+
+- Fixed random seeds
+- Deterministic TensorFlow operations
+- Consistent training pipeline
 
 ---
 
 ## Visualizations Produced
 
 ### Dataset Visualization
-- Single handwritten digit visualization  
-- 10×10 digit sample grid  
+
+- Single Digit Visualization
+- 10×10 Digit Sample Grid
 
 ### Training Diagnostics
-- Training vs Validation Accuracy  
-- Training vs Validation Loss  
+
+- One-Cycle Learning Rate Schedule
+- Training Accuracy Curves
+- Validation Accuracy Curves
+- Training Loss Curves
+- Validation Loss Curves
 
 ### Evaluation Visualizations
-- Confusion Matrix  
-- Per-Class Accuracy Plot  
-- ROC Curves (per digit)  
-- Precision-Recall Curves (per digit)  
-- Classification Report Heatmap  
-- Histogram of Prediction Confidence  
+
+- Confusion Matrix
+- Per-Class Accuracy Plot
+- Precision-Recall Curves
+- ROC Curves
+- Classification Report Heatmap
+- Prediction Confidence Histogram
 
 ### Error Analysis
-- First 25 misclassified digit samples  
-- Per-class performance inspection  
 
-These visualizations provide deeper insight into model behavior, strengths, and failure patterns.
+- Misclassified Digit Visualization
+- Class-wise Performance Analysis
+
+These visualizations provide deeper insight into model behavior, strengths, weaknesses, and prediction confidence.
 
 ---
 
 ## Tech Stack
 
-- **Programming Language:** Python  
-- **Deep Learning Framework:** TensorFlow / Keras (Sequential API)  
-- **Data Manipulation:** NumPy, Pandas  
-- **Visualization:** Matplotlib, Seaborn  
-- **Machine Learning Utilities:** Scikit-learn  
-- **Model Persistence:** Joblib  
+- **Programming Language:** Python
+- **Deep Learning Framework:** TensorFlow / Keras (Functional API)
+- **Data Manipulation:** NumPy, Pandas
+- **Visualization:** Matplotlib, Seaborn
+- **Machine Learning Utilities:** Scikit-learn
+- **Scientific Computing:** SciPy
+- **Model Persistence:** Native Keras Serialization
 
 ---
 
-## Saving the Model
+## Model Persistence
 
-The trained CNN model is serialized using Joblib:
+The final trained model is saved using TensorFlow/Keras:
 
 ```python
-import joblib
-joblib.dump(model,'CNN_model_mnist.pkl')
+model.save("CNN_model_mnist.keras")
 ```
+
+This enables:
+
+- Reproducible inference
+- Further fine-tuning
+- Model deployment
+- Integration into production systems
 
 ---
 
