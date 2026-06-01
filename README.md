@@ -168,15 +168,15 @@ Predicted probabilities from all versions are averaged to produce the final pred
 
 | Metric                          | Value        |
 |---------------------------------|--------------|
-| **Test Accuracy**               | **99.71%**   |
-| **Precision (Weighted)**        | **99.7102%** |
-| **Recall (Weighted)**           | **99.71%**   |
-| **F1-Score (Weighted)**         | **99.7100%** |
-| **ROC-AUC Score (OvR)**         | **99.9776%** |
-| **Log Loss**                    | **0.1021**   |
-| **Cohen's Kappa Score**         | **0.9968**   |
-| **Matthews Corr Coefficient**   | **0.9968**   |
-| **Top-3 Accuracy**              | **99.98%**   |
+| **Test Accuracy**               | **99.7400%** |
+| **Precision (Weighted)**        | **99.7402%** |
+| **Recall (Weighted)**           | **99.7400%** |
+| **F1-Score (Weighted)**         | **99.7400%** |
+| **ROC-AUC Score (OvR)**         | **99.9876%** |
+| **Log Loss**                    | **0.10065**  |
+| **Cohen's Kappa Score**         | **0.9971**   |
+| **Matthews Corr Coefficient**   | **0.9971**   |
+| **Top-3 Accuracy**              | **99.99%**   |
 
 ---
 
