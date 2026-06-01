@@ -182,6 +182,8 @@ Predicted probabilities from all versions are averaged to produce the final pred
 
 ## Key Highlights
 
+The proposed Residual CNN achieved **99.71% test accuracy** on the MNIST handwritten digit classification task, placing it very close to reported **state-of-the-art performance (~99.8–99.9%)** on the benchmark. This demonstrates the effectiveness of the architecture, augmentation strategy, One-Cycle learning rate scheduling, fine-tuning, and Test-Time Augmentation (TTA), while maintaining a relatively efficient and reproducible training pipeline.
+
 ### Strong Generalization
 
 - Extensive augmentation pipeline
