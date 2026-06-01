@@ -166,17 +166,17 @@ Predicted probabilities from all versions are averaged to produce the final pred
 
 ## Model Evaluation Metrics
 
-| Metric | Value |
-|----------|----------|
-| **Test Accuracy** | **___** |
-| **Precision (Weighted)** | **___** |
-| **Recall (Weighted)** | **___** |
-| **F1 Score (Weighted)** | **___** |
-| **ROC-AUC Score (OvR)** | **___** |
-| **Log Loss** | **___** |
-| **Cohen's Kappa Score** | **___** |
-| **Matthews Correlation Coefficient** | **___** |
-| **Top-3 Accuracy** | **___** |
+| Metric                          | Value        |
+|---------------------------------|--------------|
+| **Test Accuracy**               | **99.71%**   |
+| **Precision (Weighted)**        | **99.7102%** |
+| **Recall (Weighted)**           | **99.71%**   |
+| **F1-Score (Weighted)**         | **99.7100%** |
+| **ROC-AUC Score (OvR)**         | **99.9776%** |
+| **Log Loss**                    | **0.1021**   |
+| **Cohen's Kappa Score**         | **0.9968**   |
+| **Matthews Corr Coefficient**   | **0.9968**   |
+| **Top-3 Accuracy**              | **99.98%**   |
 
 ---
 
